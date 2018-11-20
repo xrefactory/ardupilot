@@ -7,6 +7,7 @@
 #ifdef M_PI
 # undef M_PI
 #endif
+#define M_PI_DBL  (3.141592653589793)
 #define M_PI      (3.141592653589793f)
 
 #ifdef M_PI_2
@@ -29,6 +30,8 @@
 
 #define DEG_TO_RAD      (M_PI / 180.0f)
 #define RAD_TO_DEG      (180.0f / M_PI)
+#define DEG_TO_RAD_DBL      (M_PI_DBL / 180.0)
+#define RAD_TO_DEG_DBL      (180.0 / M_PI_DBL)
 
 // Centi-degrees to radians
 #define DEGX100 5729.57795f

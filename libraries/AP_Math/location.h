@@ -11,6 +11,7 @@
 // scaling factor from 1e-7 degrees to meters at equator
 // == 1.0e-7 * DEG_TO_RAD * RADIUS_OF_EARTH
 #define LOCATION_SCALING_FACTOR 0.011131884502145034f
+#define LOCATION_SCALING_FACTOR_CMPL 0.0000011131884502145034
 // inverse of LOCATION_SCALING_FACTOR
 #define LOCATION_SCALING_FACTOR_INV 89.83204953368922f
 
@@ -64,6 +65,12 @@ void        location_offset(struct Location &loc, float ofs_north, float ofs_eas
   from loc1 to loc2
  */
 Vector2f    location_diff(const struct Location &loc1, const struct Location &loc2);
+
+/*
+  return the distance in meters in North/East plane as a N/E vector
+  from loc1 to loc2 with complement
+ */
+Vector2f location_diff(const struct Location &loc1, const struct Location &loc2, const struct LocationPrecisionComplement &loc2cmpl);
 
 /*
   return the distance in meters in North/East/Down plane as a N/E/D vector

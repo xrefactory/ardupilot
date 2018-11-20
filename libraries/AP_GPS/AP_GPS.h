@@ -134,6 +134,7 @@ public:
         uint32_t time_week_ms;              ///< GPS time (milliseconds from start of GPS week)
         uint16_t time_week;                 ///< GPS week number
         Location location;                  ///< last fix location
+        LocationPrecisionComplement location_cmpl; ///< complement to location for sub cm precision
         float ground_speed;                 ///< ground speed in m/sec
         float ground_course;                ///< ground course in degrees
         uint16_t hdop;                      ///< horizontal dilution of precision in cm
@@ -203,6 +204,14 @@ public:
     }
     const Location &location() const {
         return location(primary_instance);
+    }
+
+    // location low significant complement, i.e. decimals (8-11) of last fix
+    const LocationPrecisionComplement &locationCmpl(uint8_t instance) const {
+        return state[instance].location_cmpl;
+    }
+    const LocationPrecisionComplement &locationCmpl() const {
+        return locationCmpl(primary_instance);
     }
 
     // report speed accuracy

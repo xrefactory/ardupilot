@@ -135,6 +135,15 @@ struct PACKED Location {
     int32_t lng;                                        ///< param 4 - Longitude * 10**7
 };
 
+struct PACKED LocationPrecisionComplement {
+    // Location complement for GPS devices with sub cm precision.
+    // It contains low significant (8th - 11th) decimal places adjustements to altitude, longitude, latitude
+    // With this complement the location shall be precise to around 0.001 mm.
+    int16_t  altc;
+    int16_t  latc;
+    int16_t  lngc;
+};
+
 //@}
 
 ////////////////////////////////////////////////////////////////////////////////

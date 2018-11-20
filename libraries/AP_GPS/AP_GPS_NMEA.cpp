@@ -47,6 +47,7 @@ extern const AP_HAL::HAL& hal;
 
 // Convenience macros //////////////////////////////////////////////////////////
 //
+#define LL_1E11 100000000000ULL
 #define DIGIT_TO_VAL(_x)        (_x - '0')
 #define hexdigit(x) ((x)>9?'A'+((x)-10):'0'+(x))
 
@@ -206,6 +207,51 @@ uint32_t AP_GPS_NMEA::_parse_degrees()
 }
 
 /*
+  parse a NMEA latitude/longitude degree value. The result is in degrees*1e11
+ */
+uint64_t AP_GPS_NMEA::_parse_degrees64()
+{
+    char *p, *q;
+    uint8_t deg = 0, min = 0;
+    int64_t frac_min = 0;
+    int64_t ret = 0;
+
+    // scan for decimal point or end of field
+    for (p = _term; *p && isdigit(*p); p++)
+        ;
+    q = _term;
+
+    // convert degrees
+    while ((p - q) > 2 && *q) {
+        if (deg)
+            deg *= 10;
+        deg += DIGIT_TO_VAL(*q++);
+    }
+
+    // convert minutes
+    while (p > q && *q) {
+        if (min)
+            min *= 10;
+        min += DIGIT_TO_VAL(*q++);
+    }
+
+    // convert fractional minutes
+    if (*p == '.') {
+        q = p + 1;
+        int64_t frac_scale = LL_1E11/10;
+        while (*q && isdigit(*q)) {
+            frac_min += DIGIT_TO_VAL(*q) * frac_scale;
+            q++;
+            frac_scale /= 10;
+        }
+    }
+    ret = deg * LL_1E11;
+    ret += (min*LL_1E11 + frac_min) / 60;
+    return ret;
+}
+
+
+/*
   see if we have a new set of NMEA messages
  */
 bool AP_GPS_NMEA::_have_new_message()
@@ -249,6 +295,8 @@ bool AP_GPS_NMEA::_term_complete()
                     //date                        = _new_date;
                     state.location.lat     = _new_latitude;
                     state.location.lng     = _new_longitude;
+                    state.location_cmpl.latc  = _new_latitude_cmpl;
+                    state.location_cmpl.lngc  = _new_longitude_cmpl;
                     state.ground_speed     = _new_speed*0.01f;
                     state.ground_course    = wrap_360(_new_course*0.01f);
                     make_gps_time(_new_date, _new_time * 10);
@@ -260,6 +308,9 @@ bool AP_GPS_NMEA::_term_complete()
                     state.location.alt  = _new_altitude;
                     state.location.lat  = _new_latitude;
                     state.location.lng  = _new_longitude;
+                    state.location_cmpl.altc  = _new_altitude_cmpl;
+                    state.location_cmpl.latc  = _new_latitude_cmpl;
+                    state.location_cmpl.lngc  = _new_longitude_cmpl;
                     state.num_sats      = _new_satellite_count;
                     state.hdop          = _new_hdop;
                     switch(_new_quality_indicator) {
@@ -377,21 +428,35 @@ bool AP_GPS_NMEA::_term_complete()
         //
         case _GPS_SENTENCE_RMC + 3: // Latitude
         case _GPS_SENTENCE_GGA + 2:
-            _new_latitude = _parse_degrees();
+            {
+                int64_t   l;
+                l = _parse_degrees64();
+                _new_latitude = l / 10000;
+                _new_latitude_cmpl = l % 10000;
+            }
             break;
         case _GPS_SENTENCE_RMC + 4: // N/S
         case _GPS_SENTENCE_GGA + 3:
-            if (_term[0] == 'S')
+            if (_term[0] == 'S') {
                 _new_latitude = -_new_latitude;
+                _new_latitude_cmpl = -_new_latitude_cmpl;
+            }
             break;
         case _GPS_SENTENCE_RMC + 5: // Longitude
         case _GPS_SENTENCE_GGA + 4:
-            _new_longitude = _parse_degrees();
+            {
+                int64_t   l;
+                l = _parse_degrees64();
+                _new_longitude = l / 10000;
+                _new_longitude_cmpl = l % 10000;
+            }
             break;
         case _GPS_SENTENCE_RMC + 6: // E/W
         case _GPS_SENTENCE_GGA + 5:
-            if (_term[0] == 'W')
+            if (_term[0] == 'W') {
                 _new_longitude = -_new_longitude;
+                _new_longitude_cmpl = -_new_longitude_cmpl;
+            }
             break;
         case _GPS_SENTENCE_GGA + 9: // Altitude (GPGGA)
             _new_altitude = _parse_decimal_100(_term);

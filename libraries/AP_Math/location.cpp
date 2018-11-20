@@ -154,6 +154,16 @@ Vector3f location_3d_diff_NED(const struct Location &loc1, const struct Location
 }
 
 /*
+  return the distance in meters in North/East plane as a N/E vector
+  from loc1 to loc2 with complement
+ */
+Vector2f location_diff(const struct Location &loc1, const struct Location &loc2, const struct LocationPrecisionComplement &loc2cmpl)
+{
+    return Vector2f((loc2.lat*10000LL+loc2cmpl.latc - loc1.lat*10000LL) * LOCATION_SCALING_FACTOR_CMPL,
+                    (loc2.lng*10000LL+loc2cmpl.lngc - loc1.lng*10000LL) * LOCATION_SCALING_FACTOR_CMPL * longitude_scale(loc1));
+}
+
+/*
   return true if lat and lng match. Ignores altitude and options
  */
 bool locations_are_same(const struct Location &loc1, const struct Location &loc2) {

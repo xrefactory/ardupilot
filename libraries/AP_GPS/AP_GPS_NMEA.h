@@ -106,6 +106,16 @@ private:
     ///
     uint32_t    _parse_degrees();
 
+    /// Parses the current term as a NMEA-style degrees + minutes
+    /// value with up to eight decimal digits.
+    ///
+    /// This gives a theoretical resolution limit of around 0.001mm.
+    ///
+    /// @returns		The value expressed by the string in _term,
+    ///					multiplied by 1e11.
+    ///
+    uint64_t    _parse_degrees64();
+
     /// Processes the current term when it has been deemed to be
     /// complete.
     ///
@@ -135,6 +145,9 @@ private:
     int32_t _new_latitude;                                      ///< latitude parsed from a term
     int32_t _new_longitude;                                     ///< longitude parsed from a term
     int32_t _new_altitude;                                      ///< altitude parsed from a term
+    int16_t _new_latitude_cmpl;                                 ///< low significant decimals of latitude parsed from a term
+    int16_t _new_longitude_cmpl;                                ///< low significant decimals of longitude parsed from a term
+    int16_t _new_altitude_cmpl;                                 ///< low significant decimals of altitude parsed from a term
     int32_t _new_speed;                                                 ///< speed parsed from a term
     int32_t _new_course;                                        ///< course parsed from a term
     uint16_t _new_hdop;                                                 ///< HDOP parsed from a term

@@ -175,6 +175,15 @@ void DataFlash_Class::Log_Write_GPS(uint8_t i, uint64_t time_us)
         delta_ms      : gps.last_message_delta_time_ms(i)
     };
     WriteBlock(&pkt2, sizeof(pkt2));
+
+    /* write location precision complement */
+    const struct LocationPrecisionComplement &locCmpl = gps.locationCmpl(i);
+    Log_Write("GPSC",
+              "Latc,Lngc",
+              "hh", // format 
+              locCmpl.latc,
+              locCmpl.lngc
+              );
 }
 
 

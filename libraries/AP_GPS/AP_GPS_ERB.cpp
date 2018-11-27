@@ -150,6 +150,9 @@ AP_GPS_ERB::_parse_gps(void)
         state.location.lng    = (int32_t)(_buffer.pos.longitude * (double)1e7);
         state.location.lat    = (int32_t)(_buffer.pos.latitude * (double)1e7);
         state.location.alt    = (int32_t)(_buffer.pos.altitude_msl * 100);
+        state.location_cmpl.lngc = (int16_t)((int64_t)(_buffer.pos.longitude * (double)1e11) % 10000);
+        state.location_cmpl.latc = (int16_t)((int64_t)(_buffer.pos.latitude * (double)1e11) % 10000);
+        state.location_cmpl.altc = (int16_t)((int64_t)(_buffer.pos.altitude_msl * (double)1e6) % 10000);
         state.status          = next_fix;
         _new_position = true;
         state.horizontal_accuracy = _buffer.pos.horizontal_accuracy * 1.0e-3f;

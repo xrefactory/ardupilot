@@ -1,4 +1,39 @@
+
+WPNAV_RADIUS    5.0
+PSC_POSXY_P     1.0
+
+#PSC_VELXY_P		1.0     
+#PSC_VELXY_I		1.0
+#PSC_VELXY_D		0.5
+# PSC_VELXY_IMAX
+
+# set gps type to NMEA
+# 0:None 1:AUTO 2:uBlox 3:MTK 4:MTK19 5:NMEA 6:SiRF 7:HIL 8:SwiftNav 9:PX4-UAVCAN
+GPS_TYPE2 	   5
+# GPS_ENABLE2 1
+# GPS_AUTO_SWITCH
+
+# EK2_GPS_TYPE	5
+# SITL NMEA GPS gives dilution 2.0 (i.e. 200 in the units of this option), set good dilution higher
+SIM_GPS2_TYPE   5
+SIM_GPS2_ENABLE 1
+
+# GPS_HDOP_GOOD  250
+# This controls the maximum radial uncertainty in position between the value predicted by the filter
+# and the value measured by the GPS before the filter position and velocity states are reset to the GPS.
+# It is an integer value in meters.
+# EK2_GLITCH_RAD  10
+
+
+# This option fixes the problem with wrong velocity coming from EKF filter on simulator
+# EKF type: SITL
+# AHRS_EKF_TYPE   10
+
 EK2_ENABLE      1
+EK3_ENABLE      0
+
+EK2_GLITCH_RAD		9999
+
 FRAME_TYPE	0
 MAG_ENABLE	1
 FS_THR_ENABLE   1
@@ -51,9 +86,11 @@ SIM_WIND_SPD    0
 SIM_WIND_TURB   0
 SIM_BARO_RND    0
 SIM_MAG_RND     0
+SIM_GPS_NOISE    0.000000
 SIM_GPS_GLITCH_X    0
 SIM_GPS_GLITCH_Y    0
 SIM_GPS_GLITCH_Z    0
+SIM_SPEEDUP			1
 # we need small INS_ACC offsets so INS is recognised as being calibrated
 INS_ACCOFFS_X   0.001
 INS_ACCOFFS_Y   0.001

@@ -42,6 +42,8 @@
 #include "AP_GPS_UAVCAN.h"
 #endif
 
+#include "../DataFlash/DataFlash.h"
+
 #define GPS_BAUD_TIME_MS 1200
 #define GPS_TIMEOUT_MS 4000u
 
@@ -476,6 +478,9 @@ void AP_GPS::detect_instance(uint8_t instance)
         _port[instance]->set_flow_control(AP_HAL::UARTDriver::FLOW_CONTROL_DISABLE);
         dstate->last_baud_change_ms = now;
 
+#if 0 || MDEBUG
+        gcs().send_text(MAV_SEVERITY_INFO, "GPS %d: trying baudrate %d", instance+1, baudrate);
+#endif
         if (_auto_config == GPS_AUTO_CONFIG_ENABLE && new_gps == nullptr) {
             send_blob_start(instance, _initialisation_blob, sizeof(_initialisation_blob));
         }
@@ -488,6 +493,9 @@ void AP_GPS::detect_instance(uint8_t instance)
     while (initblob_state[instance].remaining == 0 && _port[instance]->available() > 0
            && new_gps == nullptr) {
         uint8_t data = _port[instance]->read();
+#if 0 || MDEBUG
+        gcs().send_text(MAV_SEVERITY_INFO, "GPS %d: %3u : %c", instance+1, (unsigned)data, ((data>=32&&data<128)?data:' '));
+#endif
         /*
           running a uBlox at less than 38400 will lead to packet
           corruption, as we can't receive the packets in the 200ms

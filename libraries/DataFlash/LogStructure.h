@@ -185,6 +185,9 @@ struct PACKED log_GPA {
     uint8_t  have_vv;
     uint32_t sample_ms;
     uint16_t delta_ms;
+    int16_t  latitudecmpl;
+    int16_t  longitudecmpl;
+    int16_t  altitudecmpl;
 };
 
 struct PACKED log_Message {
@@ -1096,10 +1099,10 @@ struct PACKED log_DSTL {
 #define ESC_UNITS "sqvAO-"
 #define ESC_MULTS "FBBBB-"
 
-#define GPA_LABELS "TimeUS,VDop,HAcc,VAcc,SAcc,VV,SMS,Delta"
-#define GPA_FMT   "QCCCCBIH"
-#define GPA_UNITS "smmmn-ss"
-#define GPA_MULTS "FBBBB-CF"
+#define GPA_LABELS "TimeUS,VDop,HAcc,VAcc,SAcc,VV,SMS,Delta,Latc,Lngc,Altc"
+#define GPA_FMT   "QCCCCBIHhhh"
+#define GPA_UNITS "smmmn-ss---"
+#define GPA_MULTS "FBBBB-CF000"
 
 // see "struct GPS_State" and "Log_Write_GPS":
 #define GPS_LABELS "TimeUS,Status,GMS,GWk,NSats,HDop,Lat,Lng,Alt,Spd,GCrs,VZ,U"
